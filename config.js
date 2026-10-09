@@ -3,6 +3,6 @@
    2) Publishable key: sb_publishable_... (o anon/public legacy)
    NUNCA pegues aquí una clave 'secret', 'service_role' o tu contraseña. */
 window.FORMA_CONFIG = {
-  supabaseUrl: '',
-  supabasePublishableKey: ''
+  supabaseUrl: 'https://yhlsvvaexzetrzkrkqxm.supabase.co',
+  supabasePublishableKey: 'sb_publishable_WuVa-WPLXoeFnL5lk2DQSA_bdb5K1yw'
 };
