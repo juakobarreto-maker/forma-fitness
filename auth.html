@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es-UY">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0D0D0F">
+<title>FORMA — Mi cuenta</title>
+<style>
+:root{--bg:#0d0d0f;--panel:#19191c;--border:#454144;--gold:#c6a667;--text:#f5f2ec;--muted:#ada7a2}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif}button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.header{max-width:1120px;margin:0 auto;padding:26px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}.logo{font-size:28px;font-weight:950;letter-spacing:-2px}.logo span{color:var(--gold)}.back{font-size:13px;color:var(--muted)}.wrap{max-width:970px;margin:35px auto 80px;padding:0 22px;display:grid;grid-template-columns:1fr 1.05fr;gap:56px;align-items:center}.eyebrow{font-size:12px;font-weight:900;letter-spacing:.17em;color:var(--gold)}h1{font-size:clamp(39px,5.2vw,64px);letter-spacing:-2px;line-height:1.06;margin:19px 0}h1 em{font-style:normal;color:var(--gold)}.lead{font-size:17px;color:#c6bfba;max-width:390px;line-height:1.6}.perks{margin:26px 0;display:grid;gap:15px;font-size:14px;color:#d9d2ca}.perks span:before{content:'◆';margin-right:11px;color:var(--gold);font-size:10px}.note{font-size:12px;color:var(--muted)}.panel{background:var(--panel);border:1px solid var(--border);padding:32px;border-radius:19px}.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:26px;gap:20px}.tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:0 5px 16px;font-weight:800}.tab.active{color:var(--text);border-color:var(--gold)}.panel h2{font-size:27px;letter-spacing:-.8px;margin:0 0 6px}.hint{color:var(--muted);font-size:13px;margin:0 0 24px}.group{margin-bottom:18px}.group label{display:block;font-size:12px;font-weight:700;margin-bottom:8px;color:#d7cabc}.field{background:#111113;color:var(--text);border:1px solid #5d544b;border-radius:10px;padding:14px 13px;width:100%;min-height:48px;font-size:16px}.btn{width:100%;padding:14px;border-radius:10px;border:1px solid transparent;background:var(--gold);color:#201912;font-weight:850;margin-top:6px;min-height:48px}.btn.secondary{background:transparent;border-color:#746653;color:var(--text)}.link{background:none;border:0;color:#e3c78e;font-size:13px;margin-top:18px;padding:6px 0;text-decoration:underline;text-underline-offset:3px}.message{margin-bottom:22px;padding:13px;border-radius:10px;border:1px solid #876943;background:#3a2b20;color:#f3e0c5;font-size:13px;line-height:1.5}.message.error{border-color:#91474a;background:#3b2022;color:#ffe5e5}.message.ok{border-color:#597866;background:#192b24;color:#cdf0d5}.hide{display:none!important}footer{text-align:center;color:var(--muted);font-size:12px;padding:30px 20px}.status{word-break:break-word;color:#e3c78e;font-weight:700}@media(max-width:760px){.wrap{grid-template-columns:1fr;gap:20px;margin:10px auto 50px}.panel{padding:23px}.lead{max-width:none}.perks{margin:18px 0}.header{padding:18px 22px}h1{font-size:43px}}
+</style>
+</head><body>
+<header class="header"><a class="logo" href="index.html">FOR<span>MA.</span></a><a class="back" href="index.html">← Volver a FORMA</a></header>
+<main class="wrap"><section><div class="eyebrow">FORMA / TU ESPACIO</div><h1>TU PROGRESO.<br><em>SIEMPRE CON VOS.</em></h1><p class="lead">Accedé a tus rutinas y entrenamientos desde el gimnasio, tu celular o tu computadora.</p><div class="perks"><span>Rutinas y registros vinculados a tu cuenta</span><span>Historial disponible en distintos dispositivos</span><span>Respaldo local para cambios sin conexión</span></div><p class="note">Versión de pruebas. Todavía no hay pagos reales ni asesorías individuales activas.</p></section>
+<section class="panel" aria-label="Cuenta FORMA">
+<div id="message" class="message hide" role="status"></div>
+<div id="authArea">
+ <div class="tabs" role="tablist"><button class="tab active" id="tabLogin" type="button" aria-selected="true">Iniciar sesión</button><button class="tab" id="tabSignup" type="button" aria-selected="false">Crear cuenta</button></div>
+ <h2 id="heading">Volvé a entrenar.</h2><p class="hint" id="subheading">Tus datos estarán asociados a tu correo electrónico.</p>
+ <form id="loginForm">
+  <div class="group"><label for="email">Correo electrónico</label><input class="field" type="email" id="email" autocomplete="email" placeholder="tu@correo.com" required maxlength="250"></div>
+  <div class="group"><label for="password">Contraseña</label><input class="field" type="password" id="password" autocomplete="current-password" placeholder="Mínimo 8 caracteres" required minlength="8" maxlength="128"></div>
+  <button class="btn" type="submit" id="submitAuth">Iniciar sesión →</button>
+ </form>
+ <button class="link" id="forgot" type="button">¿Olvidaste tu contraseña?</button>
+</div>
+<div id="resetArea" class="hide"><h2>Elegí una contraseña nueva.</h2><p class="hint">Llegaste desde el enlace de recuperación de tu correo.</p><form id="resetForm"><div class="group"><label for="newPassword">Nueva contraseña</label><input type="password" id="newPassword" class="field" required minlength="8" maxlength="128" autocomplete="new-password"></div><button class="btn" type="submit">Guardar nueva contraseña</button></form></div>
+<div id="accountArea" class="hide"><div class="eyebrow">SESIÓN ACTIVA</div><h2>Bienvenido a FORMA.</h2><p class="hint">Ingresaste con <span id="accountEmail" class="status"></span>.</p><a href="app.html" class="btn" style="display:block;text-align:center">Ir a mis entrenamientos →</a><button id="logout" class="btn secondary" type="button">Cerrar sesión</button></div>
+</section></main><footer>FORMA 3.3 · Tu entrenamiento, tu progreso, tu ritmo.</footer>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+'use strict';
+const el=id=>document.getElementById(id);
+const config=window.FORMA_CONFIG||{};
+let client,mode='login',recovery=false;
+function msg(text,kind='') {const box=el('message');box.className='message'+(kind?' '+kind:'');box.textContent=text;}
+function setMode(next){mode=next;el('tabLogin').classList.toggle('active',mode==='login');el('tabSignup').classList.toggle('active',mode==='signup');el('tabLogin').setAttribute('aria-selected',String(mode==='login'));el('tabSignup').setAttribute('aria-selected',String(mode==='signup'));el('heading').textContent=mode==='login'?'Volvé a entrenar.':'Empezá tu progreso.';el('subheading').textContent=mode==='login'?'Ingresá a tu cuenta para recuperar tu progreso.':'Creá una cuenta gratuita. Tus datos se sincronizarán al iniciar sesión.';el('submitAuth').textContent=mode==='login'?'Iniciar sesión →':'Crear mi cuenta →';el('forgot').classList.toggle('hide',mode!=='login');el('password').setAttribute('autocomplete',mode==='login'?'current-password':'new-password');el('message').classList.add('hide');}
+el('tabLogin').addEventListener('click',()=>setMode('login'));
+el('tabSignup').addEventListener('click',()=>setMode('signup'));
+function showAccount(user){el('authArea').classList.add('hide');el('resetArea').classList.add('hide');el('accountArea').classList.remove('hide');el('accountEmail').textContent=user.email||'(sin correo)';}
+function showRecovery(){recovery=true;el('authArea').classList.add('hide');el('accountArea').classList.add('hide');el('resetArea').classList.remove('hide');msg('Enlace de recuperación válido. Elegí una contraseña nueva.','ok');}
+async function boot(){
+ if(!config.supabaseUrl||!config.supabasePublishableKey){msg('Falta configurar Supabase. Completá config.js según el README antes de crear cuentas.','error');el('submitAuth').disabled=true;el('forgot').disabled=true;return;}
+ if(!window.supabase?.createClient){msg('No se pudo cargar Supabase. Comprobá tu conexión a Internet y actualizá la página.','error');el('submitAuth').disabled=true;el('forgot').disabled=true;return;}
+ try{
+   client=window.supabase.createClient(config.supabaseUrl,config.supabasePublishableKey);
+   client.auth.onAuthStateChange((event,session)=>{
+     if(event==='PASSWORD_RECOVERY') showRecovery();
+     else if(event==='SIGNED_IN'&&!recovery && session?.user)showAccount(session.user);
+     else if(event==='SIGNED_OUT'){el('accountArea').classList.add('hide');el('authArea').classList.remove('hide');setMode('login');}
+   });
+   const {data,error}=await client.auth.getSession();if(error)throw error;
+   const url = new URL(location.href);
+   if(url.searchParams.get('type')==='recovery'||location.hash.includes('type=recovery'))showRecovery();
+   else if(data?.session?.user) showAccount(data.session.user);
+ }catch(e){msg('Error al conectar: '+String(e.message||e).slice(0,180),'error');}
+}
+el('loginForm').addEventListener('submit',async(ev)=>{
+ ev.preventDefault();if(!client)return;
+ const email=el('email').value.trim(),password=el('password').value;
+ if(password.length<8){msg('La contraseña debe tener al menos 8 caracteres.','error');return;}
+ const btn=el('submitAuth');btn.disabled=true;msg('Procesando solicitud…');
+ try{
+   if(mode==='signup'){
+     const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:new URL('auth.html',location.href).href}});
+     if(error)throw error;
+     if(data.session)showAccount(data.user);
+     else msg('Si el correo puede registrarse, recibirás un enlace de confirmación. Revisá tu bandeja de entrada y spam.','ok');
+   }else{
+     const {data,error}=await client.auth.signInWithPassword({email,password});
+     if(error)throw error;
+     if(data.user)showAccount(data.user);
+   }
+ }catch(e){msg('No se pudo completar: '+String(e.message||e).slice(0,200),'error')}
+ finally{btn.disabled=false;}
+});
+el('forgot').addEventListener('click',async()=>{
+ if(!client)return;
+ const email=el('email').value.trim();if(!email){msg('Primero escribí tu correo electrónico.','error');el('email').focus();return;}
+ try {const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:new URL('auth.html',location.href).href});if(error)throw error;msg('Si existe una cuenta con ese correo, recibirás instrucciones para restablecer tu contraseña.','ok');}
+ catch(e){msg('No pudimos enviar el correo: '+String(e.message||e).slice(0,160),'error');}
+});
+el('resetForm').addEventListener('submit',async(ev)=>{
+ ev.preventDefault();if(!client)return;
+ const p=el('newPassword').value;if(p.length<8){msg('Usá una contraseña de al menos 8 caracteres.','error');return;}
+ try{const {data,error}=await client.auth.updateUser({password:p});if(error)throw error;recovery=false;msg('Contraseña actualizada. Ya podés abrir tus entrenamientos.','ok');showAccount(data.user);}
+ catch(e){msg('No se pudo actualizar: '+String(e.message||e).slice(0,160),'error');}
+});
+el('logout').addEventListener('click',async()=>{
+ if(!client)return;
+ try{const {error}=await client.auth.signOut();if(error)throw error;msg('Sesión cerrada.','ok');el('accountArea').classList.add('hide');el('authArea').classList.remove('hide');setMode('login');}
+ catch(e){msg('No se pudo cerrar sesión: '+String(e.message||e).slice(0,160),'error');}
+});
+boot();
+})();
+</script>
+</body></html>
