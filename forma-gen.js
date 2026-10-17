@@ -141,6 +141,10 @@
       try { candidate = await opts.remote(answers, lib); source = 'ia'; } catch (e) { candidate = null; }
       if (candidate && !validate(candidate, lib, answers).ok) candidate = null;
     }
+    if (candidate) { // se reconstruye solo con campos conocidos: nada extra de la IA llega a la app
+      const lbl = GOALS[normalize(answers).value.goal].label;
+      candidate = { goal: lbl, days: candidate.days.map(d => { const nm = String(d.name).trim(); return { name: nm, short: nm.slice(0, 20), ex: d.ex.map(e => [e[0], e[1], e[2], e[3]]) }; }) };
+    }
     if (!candidate) { candidate = plan(answers, lib); source = 'local'; }
     const v = validate(candidate, lib, answers);
     if (!v.ok) return { ok: false, blocked: false, reasons: ['No pudimos armar una rutina segura con esas opciones. Probá cambiar equipamiento o tiempo.'], errors: v.errors };
