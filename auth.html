@@ -20,6 +20,7 @@
  <form id="loginForm">
   <div class="group"><label for="email">Correo electrónico</label><input class="field" type="email" id="email" autocomplete="email" placeholder="tu@correo.com" required maxlength="250"></div>
   <div class="group"><label for="password">Contraseña</label><input class="field" type="password" id="password" autocomplete="current-password" placeholder="Mínimo 8 caracteres" required minlength="8" maxlength="128"></div>
+  <div class="group hide" id="consentBox"><label style="display:flex;gap:10px;align-items:flex-start;font-weight:400;color:#d7cabc;line-height:1.5"><input type="checkbox" id="consent" style="width:22px;height:22px;flex:0 0 22px;margin:1px 0 0"><span>Soy mayor de 18 años y acepto los <a href="terms.html" target="_blank" rel="noopener" style="text-decoration:underline">Términos</a> y la <a href="privacy.html" target="_blank" rel="noopener" style="text-decoration:underline">Política de privacidad</a>.</span></label></div>
   <button class="btn" type="submit" id="submitAuth">Iniciar sesión →</button>
  </form>
  <button class="link" id="forgot" type="button">¿Olvidaste tu contraseña?</button>
@@ -37,7 +38,7 @@ const config=window.FORMA_CONFIG||{};
 let client,mode='login',recovery=false;
 function msg(text,kind='') {const box=el('message');box.className='message'+(kind?' '+kind:'');box.textContent=text;try{box.scrollIntoView({block:'nearest',behavior:'smooth'})}catch(e){}}
 function needClient(){if(client)return false;msg('No se pudo conectar con el servicio de cuentas. Actualizá la página; si sigue igual, desactivá el bloqueador de contenido o probá con otra red o navegador.','error');return true;}
-function setMode(next){mode=next;el('tabLogin').classList.toggle('active',mode==='login');el('tabSignup').classList.toggle('active',mode==='signup');el('tabLogin').setAttribute('aria-selected',String(mode==='login'));el('tabSignup').setAttribute('aria-selected',String(mode==='signup'));el('heading').textContent=mode==='login'?'Volvé a entrenar.':'Empezá tu progreso.';el('subheading').textContent=mode==='login'?'Ingresá a tu cuenta para recuperar tu progreso.':'Creá una cuenta gratuita. Tus datos se sincronizarán al iniciar sesión.';el('submitAuth').textContent=mode==='login'?'Iniciar sesión →':'Crear mi cuenta →';el('forgot').classList.toggle('hide',mode!=='login');el('password').setAttribute('autocomplete',mode==='login'?'current-password':'new-password');el('message').classList.add('hide');}
+function setMode(next){mode=next;el('tabLogin').classList.toggle('active',mode==='login');el('tabSignup').classList.toggle('active',mode==='signup');el('tabLogin').setAttribute('aria-selected',String(mode==='login'));el('tabSignup').setAttribute('aria-selected',String(mode==='signup'));el('heading').textContent=mode==='login'?'Volvé a entrenar.':'Empezá tu progreso.';el('subheading').textContent=mode==='login'?'Ingresá a tu cuenta para recuperar tu progreso.':'Creá una cuenta gratuita. Tus datos se sincronizarán al iniciar sesión.';el('submitAuth').textContent=mode==='login'?'Iniciar sesión →':'Crear mi cuenta →';el('forgot').classList.toggle('hide',mode!=='login');el('consentBox').classList.toggle('hide',mode!=='signup');el('password').setAttribute('autocomplete',mode==='login'?'current-password':'new-password');el('message').classList.add('hide');}
 el('tabLogin').addEventListener('click',()=>setMode('login'));
 el('tabSignup').addEventListener('click',()=>setMode('signup'));
 function showAccount(user){el('authArea').classList.add('hide');el('resetArea').classList.add('hide');el('accountArea').classList.remove('hide');el('accountEmail').textContent=user.email||'(sin correo)';}
@@ -62,6 +63,7 @@ el('loginForm').addEventListener('submit',async(ev)=>{
  ev.preventDefault();if(needClient())return;
  const email=el('email').value.trim(),password=el('password').value;
  if(password.length<8){msg('La contraseña debe tener al menos 8 caracteres.','error');return;}
+ if(mode==='signup'&&!el('consent').checked){msg('Para crear tu cuenta tenés que confirmar que sos mayor de 18 años y aceptar los términos y la política de privacidad.','error');return;}
  const btn=el('submitAuth');btn.disabled=true;msg('Procesando solicitud…');
  try{
    if(mode==='signup'){
