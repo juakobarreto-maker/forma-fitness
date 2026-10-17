@@ -35,15 +35,16 @@
 const el=id=>document.getElementById(id);
 const config=window.FORMA_CONFIG||{};
 let client,mode='login',recovery=false;
-function msg(text,kind='') {const box=el('message');box.className='message'+(kind?' '+kind:'');box.textContent=text;}
+function msg(text,kind='') {const box=el('message');box.className='message'+(kind?' '+kind:'');box.textContent=text;try{box.scrollIntoView({block:'nearest',behavior:'smooth'})}catch(e){}}
+function needClient(){if(client)return false;msg('No se pudo conectar con el servicio de cuentas. Actualizá la página; si sigue igual, desactivá el bloqueador de contenido o probá con otra red o navegador.','error');return true;}
 function setMode(next){mode=next;el('tabLogin').classList.toggle('active',mode==='login');el('tabSignup').classList.toggle('active',mode==='signup');el('tabLogin').setAttribute('aria-selected',String(mode==='login'));el('tabSignup').setAttribute('aria-selected',String(mode==='signup'));el('heading').textContent=mode==='login'?'Volvé a entrenar.':'Empezá tu progreso.';el('subheading').textContent=mode==='login'?'Ingresá a tu cuenta para recuperar tu progreso.':'Creá una cuenta gratuita. Tus datos se sincronizarán al iniciar sesión.';el('submitAuth').textContent=mode==='login'?'Iniciar sesión →':'Crear mi cuenta →';el('forgot').classList.toggle('hide',mode!=='login');el('password').setAttribute('autocomplete',mode==='login'?'current-password':'new-password');el('message').classList.add('hide');}
 el('tabLogin').addEventListener('click',()=>setMode('login'));
 el('tabSignup').addEventListener('click',()=>setMode('signup'));
 function showAccount(user){el('authArea').classList.add('hide');el('resetArea').classList.add('hide');el('accountArea').classList.remove('hide');el('accountEmail').textContent=user.email||'(sin correo)';}
 function showRecovery(){recovery=true;el('authArea').classList.add('hide');el('accountArea').classList.add('hide');el('resetArea').classList.remove('hide');msg('Enlace de recuperación válido. Elegí una contraseña nueva.','ok');}
 async function boot(){
- if(!config.supabaseUrl||!config.supabasePublishableKey){msg('Falta configurar Supabase. Completá config.js según el README antes de crear cuentas.','error');el('submitAuth').disabled=true;el('forgot').disabled=true;return;}
- if(!window.supabase?.createClient){msg('No se pudo cargar Supabase. Comprobá tu conexión a Internet y actualizá la página.','error');el('submitAuth').disabled=true;el('forgot').disabled=true;return;}
+ if(!config.supabaseUrl||!config.supabasePublishableKey){msg('Falta configurar Supabase. Completá config.js según el README antes de crear cuentas.','error');return;}
+ if(!window.supabase?.createClient){msg('No se pudo cargar Supabase. Comprobá tu conexión a Internet y actualizá la página.','error');return;}
  try{
    client=window.supabase.createClient(config.supabaseUrl,config.supabasePublishableKey);
    client.auth.onAuthStateChange((event,session)=>{
@@ -58,7 +59,7 @@ async function boot(){
  }catch(e){msg('Error al conectar: '+String(e.message||e).slice(0,180),'error');}
 }
 el('loginForm').addEventListener('submit',async(ev)=>{
- ev.preventDefault();if(!client)return;
+ ev.preventDefault();if(needClient())return;
  const email=el('email').value.trim(),password=el('password').value;
  if(password.length<8){msg('La contraseña debe tener al menos 8 caracteres.','error');return;}
  const btn=el('submitAuth');btn.disabled=true;msg('Procesando solicitud…');
@@ -77,19 +78,22 @@ el('loginForm').addEventListener('submit',async(ev)=>{
  finally{btn.disabled=false;}
 });
 el('forgot').addEventListener('click',async()=>{
- if(!client)return;
+ if(needClient())return;
  const email=el('email').value.trim();if(!email){msg('Primero escribí tu correo electrónico.','error');el('email').focus();return;}
- try {const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:new URL('auth.html',location.href).href});if(error)throw error;msg('Si existe una cuenta con ese correo, recibirás instrucciones para restablecer tu contraseña.','ok');}
+ const fb=el('forgot');fb.disabled=true;msg('Enviando instrucciones…');
+ try {const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:new URL('auth.html',location.href).href});if(error)throw error;msg('Si existe una cuenta con ese correo, recibirás instrucciones para restablecer tu contraseña. Revisá también spam. Puede tardar unos minutos.','ok');}
  catch(e){msg('No pudimos enviar el correo: '+String(e.message||e).slice(0,160),'error');}
+ finally{setTimeout(()=>{fb.disabled=false},3000);}
 });
 el('resetForm').addEventListener('submit',async(ev)=>{
- ev.preventDefault();if(!client)return;
+ ev.preventDefault();if(needClient())return;
  const p=el('newPassword').value;if(p.length<8){msg('Usá una contraseña de al menos 8 caracteres.','error');return;}
  try{const {data,error}=await client.auth.updateUser({password:p});if(error)throw error;recovery=false;msg('Contraseña actualizada. Ya podés abrir tus entrenamientos.','ok');showAccount(data.user);}
  catch(e){msg('No se pudo actualizar: '+String(e.message||e).slice(0,160),'error');}
 });
 el('logout').addEventListener('click',async()=>{
- if(!client)return;
+
+ if(needClient())return;
  try{const {error}=await client.auth.signOut();if(error)throw error;msg('Sesión cerrada.','ok');el('accountArea').classList.add('hide');el('authArea').classList.remove('hide');setMode('login');}
  catch(e){msg('No se pudo cerrar sesión: '+String(e.message||e).slice(0,160),'error');}
 });
