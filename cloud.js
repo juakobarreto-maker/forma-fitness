@@ -23,6 +23,7 @@
   const okState = s => { const r = FS.check(s, { strict: false }); return r.ok ? r.value : null; };
   const baseOf = p => (p && FS.parseRevision(p.baseVersion !== undefined ? p.baseVersion : p.version));
   const CONFLICT_RE = /VERSION_CONFLICT|STATE_CONFLICT/i;
+  const PLAN_RE = /PLAN_LIMIT/i;
   const BTN_EXPORT_MINE = '<button class="btn small secondary" onclick="exportData()">↓ Exportar mi copia</button>';
   const BTN_EXPORT_PENDING = '<button class="btn small secondary" onclick="window.formaCloud.exportPending()">↓ Exportar copia en conflicto</button>';
   const BTN_USE_CLOUD = '<button class="btn small secondary" onclick="window.formaCloud.discardAndReload()">Usar versión de la nube</button>';
@@ -133,6 +134,10 @@
           if (CONFLICT_RE.test(String(err && err.message || ''))) {
             this.inflight = null;
             this.enterConflict(this.pending, null);
+          } else if (PLAN_RE.test(String(err && err.message || ''))) {
+            // El servidor rechazó el guardado por el plan: no se aplicó nada y la versión no cambió. Se conservan los datos locales.
+            this.inflight = null; this.verified = true;
+            this.setMessage('🔒 <b>Tu plan gratis permite 1 sesión y 4 días de rutina.</b> Tus cambios quedaron en este dispositivo, pero NO se subieron a la nube. Exportá una copia o desbloqueá un plan.', 'warning', '<div class="stack">' + BTN_EXPORT_MINE + '<a class="btn small secondary" href="index.html#precios">Ver planes</a></div>');
           } else {
             // No sabemos si el servidor aplicó el cambio (respuesta perdida / inválida): antes de reintentar se reconcilia.
             this.verified = false;
@@ -142,6 +147,23 @@
         }
       }
       return !this.conflict && !this.pending && this.acked >= this.seq;
+    },
+
+    /* Plan real del usuario según el servidor (si la función no existe o no hay red, se usa la copia reciente o se queda en "desconocido"). */
+    async fetchPlan() {
+      try {
+        const r = await this.client.rpc('forma_my_plan');
+        if (r.error) throw r.error;
+        const p = r.data;
+        if (!p || typeof p !== 'object' || typeof p.pro !== 'boolean') throw new Error('plan inválido');
+        this.plan = { plan: String(p.plan || 'free').slice(0, 20), pro: p.pro, valid_until: p.valid_until || null };
+        this.planKnown = true; wr(this.planKey, Object.assign({ t: Date.now() }, this.plan));
+      } catch (e) {
+        const c = rd(this.planKey);
+        if (c && typeof c.pro === 'boolean' && Date.now() - Number(c.t || 0) < 7 * 864e5) { this.plan = { plan: String(c.plan || 'free').slice(0, 20), pro: c.pro, valid_until: c.valid_until || null }; this.planKnown = true; }
+        else { this.plan = null; this.planKnown = false; }
+      }
+      try { if (this.ready && typeof render === 'function') render(); } catch (e) { /* la pantalla se actualizará luego */ }
     },
 
     /* Lee la revisión real del servidor antes de enviar tras un fallo o una recuperación offline. */
@@ -223,15 +245,16 @@
         this.user = session.user;
         const id = session.user.id;
         this.cacheKey = 'forma_cloud_cache_' + id; this.metaKey = 'forma_cloud_meta_' + id; this.dirtyKey = 'forma_cloud_pending_' + id;
-        this.conflictKey = 'forma_cloud_conflict_' + id; this.archiveKey = 'forma_cloud_archive_' + id;
+        this.conflictKey = 'forma_cloud_conflict_' + id; this.archiveKey = 'forma_cloud_archive_' + id; this.planKey = 'forma_cloud_plan_' + id;
         let row = null, readError = null;
         try {
           const r = await this.client.from('forma_user_state').select('state,version').eq('user_id', id).maybeSingle();
           if (r.error) throw r.error;
           row = r.data;
         } catch (e) { readError = e; }
-        if (readError) { this.loadOffline(readError); return; }
+        if (readError) { this.loadOffline(readError); await this.fetchPlan(); return; }
         this.loadOnline(row);
+        await this.fetchPlan();
       } catch (err) {
         console.error('[FORMA] No pudo iniciar sincronización:', err);
         if (this.user) this.loadOffline(err);
