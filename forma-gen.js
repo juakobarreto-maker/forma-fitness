@@ -73,10 +73,13 @@
     return { value: out, missing };
   }
 
+  // item = [nombre, grupo, equipo, indicación, alternativa, nivel mínimo (0 principiante, 1 intermedio, 2 avanzado; por defecto 0)]
   const equipOk = (equipment, item) => {
     if (equipment === 'gimnasio') return true;
+    if (equipment === 'casa') return /peso corporal|suelo/i.test(item[2]);
     return /mancuerna|peso corporal|suelo/i.test(item[2]);
   };
+  const levelOk = (li, item) => (item[5] || 0) <= li;
 
   /* ---------- 3. Motor determinista ---------- */
   function plan(answers, lib) {
@@ -84,7 +87,7 @@
     if (n.missing.length) throw new Error('Faltan respuestas: ' + n.missing.join(', '));
     const a = n.value, g = GOALS[a.goal], li = LEVELS.indexOf(a.level);
     const perDay = PER_DAY.find(p => p[0] === a.minutes)[1];
-    const pool = lib.filter(e => equipOk(a.equipment, e));
+    const pool = lib.filter(e => equipOk(a.equipment, e) && levelOk(li, e));
     const kinds = SPLITS[a.days], seen = {};
     const days = kinds.map(kind => {
       const v = seen[kind] = (seen[kind] || 0);
