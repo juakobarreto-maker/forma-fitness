@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es-UY">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0F1915">
+<title>FORMA — Administración</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+:root{--bg:#0F1915;--panel:#172720;--panel2:#1D2F26;--border:#6A8E7B;--line:#2F4C3E;--gold:#D8C28F;--text:#EEEBE2;--muted:#A0AFA5}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif}
+h1,h2,.logo{font-family:Outfit,'Instrument Sans',system-ui,sans-serif}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.header{max-width:1180px;margin:0 auto;padding:20px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{font-size:26px;font-weight:700;letter-spacing:-1.5px;text-decoration:none}.logo span{color:var(--gold)}
+.role{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);border:1px solid var(--border);border-radius:99px;padding:4px 10px}
+.me{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:13px;color:var(--muted);flex-wrap:wrap}.me #meEmail{color:var(--text);word-break:break-all}
+main{max-width:1180px;margin:0 auto;padding:0 20px 70px}
+.btn{border:1px solid transparent;background:var(--gold);color:#16241D;font-weight:700;border-radius:11px;padding:11px 16px;min-height:44px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn.secondary{background:var(--panel2);border-color:var(--border);color:var(--text)}.btn.small{font-size:13px;padding:8px 12px}.btn:disabled{opacity:.5;cursor:not-allowed}
+.field{background:#111C17;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px;min-height:44px;font-size:16px;width:100%}
+#gate{max-width:520px;margin:60px auto;background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:30px}#gate h1{margin:0 0 8px;font-size:30px}#gate p{color:var(--muted);margin:0 0 20px}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin:8px 0 22px;overflow-x:auto}
+.tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:12px 12px;font-weight:700;white-space:nowrap;min-height:44px}.tab.active{color:var(--text);border-color:var(--gold)}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}.bar .grow{flex:1 1 220px}.bar .count{color:var(--muted);font-size:13px}
+h2{font-size:24px;margin:0 0 4px;letter-spacing:-.5px}.sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:4px}
+.kpi .kl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}.kpi strong{font:600 34px/1.1 Outfit,sans-serif}.kpi .ks{font-size:13px;color:var(--muted)}
+.tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:middle}th{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;background:#14231C}
+tr:last-child td{border-bottom:0}td.n{text-align:right;font-variant-numeric:tabular-nums}td.empty{color:var(--muted);text-align:center;padding:26px}.email{word-break:break-all}
+.badge{display:inline-block;border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;white-space:nowrap}.badge.pro{border-color:var(--gold);color:#E9DDB9}.badge small{color:var(--muted)}
+.tag{margin-left:6px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.msg{display:none;margin:0 0 16px;padding:12px 14px;border-radius:11px;border:1px solid var(--border);background:#1E3228;font-size:14px}.msg.show{display:block}.msg.error{border-color:#C46A70;background:#3B2022;color:#FFE5E5}.msg.ok{border-color:#6A8E7B;color:#D8EFDD}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:18px;padding:24px;width:min(440px,calc(100vw - 32px))}dialog::backdrop{background:#000a}
+dialog h2{font-size:22px}dialog label{display:block;font-size:13px;font-weight:700;margin:14px 0 6px}dialog .row{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+.err{color:#FFC9C9;font-size:13px;min-height:1.2em;margin-top:10px}.hint{color:var(--muted);font-size:12px;margin-top:5px}
+.note{color:var(--muted);font-size:12px;margin-top:18px}
+@media(max-width:700px){
+  .me{margin-left:0;width:100%}
+  .tablewrap{border:0;background:none;overflow:visible}
+  table,tbody,tr,td{display:block;width:100%}thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  tr{background:var(--panel);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;padding:6px 4px}
+  td{border:0;padding:6px 12px;display:flex;justify-content:space-between;gap:12px;text-align:right}td.n{text-align:right}
+  td[data-l]:before{content:attr(data-l);color:var(--muted);font-size:12px;font-weight:700;text-align:left;flex:0 0 auto}
+  td:not([data-l]){justify-content:flex-end}td.empty{display:block;text-align:center}
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="index.html">FOR<span>MA</span>.</a><span class="role">Administración</span>
+  <div class="me"><span>Cuenta: <span id="meEmail"></span></span><a class="btn small secondary" href="app.html">Ir a la app</a><button class="btn small secondary" id="logout" type="button">Salir</button></div>
+</header>
+<main>
+  <section id="gate" aria-live="polite"><h1>Cargando…</h1><p>Comprobando tu cuenta.</p></section>
+
+  <section id="panel" hidden>
+    <div class="tabs" id="tablist" role="tablist" aria-label="Secciones del panel">
+      <button class="tab" id="tab-resumen" role="tab" type="button" aria-controls="sec-resumen">Resumen</button>
+      <button class="tab" id="tab-usuarios" role="tab" type="button" aria-controls="sec-usuarios">Usuarios</button>
+      <button class="tab" id="tab-espera" role="tab" type="button" aria-controls="sec-espera">Lista de espera</button>
+      <button class="tab" id="tab-registro" role="tab" type="button" aria-controls="sec-registro">Registro</button>
+    </div>
+    <div id="adminMsg" class="msg" role="status" aria-live="polite"></div>
+    <div class="bar"><span class="grow"></span><button class="btn small secondary" id="refresh" type="button">↻ Actualizar</button></div>
+
+    <section id="sec-resumen" role="tabpanel" aria-labelledby="tab-resumen">
+      <h2>Resumen</h2><p class="sub" id="kpiTime"></p>
+      <div class="kpis" id="kpis"></div>
+    </section>
+
+    <section id="sec-usuarios" role="tabpanel" aria-labelledby="tab-usuarios" hidden>
+      <h2>Usuarios</h2><p class="sub">Solo ves correo, fechas, plan y contadores. El contenido de los entrenamientos no sale de la cuenta de cada persona.</p>
+      <form class="bar" id="searchForm" role="search">
+        <label class="grow"><span class="hint" style="display:block;margin:0 0 4px">Buscar por correo</span><input class="field" id="search" type="search" maxlength="100" autocomplete="off" placeholder="nombre@correo.com"></label>
+        <button class="btn" type="submit" style="align-self:flex-end">Buscar</button>
+      </form>
+      <div class="tablewrap"><table id="usersTable"><caption class="sub" style="caption-side:bottom;text-align:left;padding:10px 13px" id="usersCount"></caption>
+        <thead><tr><th scope="col">Correo</th><th scope="col">Alta</th><th scope="col">Último guardado</th><th scope="col">Sesiones</th><th scope="col">IA 7 días</th><th scope="col">Plan</th><th scope="col"><span class="sr">Acción</span></th></tr></thead>
+        <tbody id="usersBody"></tbody></table></div>
+      <div class="bar" style="margin-top:12px"><button class="btn small secondary" id="prevPage" type="button">← Anteriores</button><button class="btn small secondary" id="nextPage" type="button">Siguientes →</button></div>
+    </section>
+
+    <section id="sec-espera" role="tabpanel" aria-labelledby="tab-espera" hidden>
+      <h2>Lista de espera</h2><p class="sub">Personas que pidieron que les avisemos. Usá estos correos solo para eso.</p>
+      <div class="bar">
+        <label><span class="hint" style="display:block;margin:0 0 4px">Plan</span><select class="field" id="waitPlan"><option value="">Todos</option><option value="rutinas">Rutinas</option><option value="asesoria">Asesoría</option><option value="integral">Integral</option></select></label>
+        <span class="count grow" id="waitCount" style="align-self:flex-end"></span>
+        <button class="btn small secondary" id="waitCsv" type="button" style="align-self:flex-end">↓ Descargar CSV</button>
+      </div>
+      <div class="tablewrap"><table id="waitTable"><thead><tr><th scope="col">Correo</th><th scope="col">Plan</th><th scope="col">Objetivo</th><th scope="col">Fecha</th></tr></thead><tbody id="waitBody"></tbody></table></div>
+    </section>
+
+    <section id="sec-registro" role="tabpanel" aria-labelledby="tab-registro" hidden>
+      <h2>Registro de cambios</h2><p class="sub">Cada cambio de plan queda anotado con quién lo hizo y cuándo. No se puede borrar desde la web.</p>
+      <div class="tablewrap"><table><thead><tr><th scope="col">Fecha</th><th scope="col">Usuario</th><th scope="col">Cambio</th><th scope="col">Hecho por</th></tr></thead><tbody id="auditBody"></tbody></table></div>
+    </section>
+    <p class="note">FORMA 3.14 · Panel de administración. Los permisos los controla el servidor: si alguien sin rol abre esta página, no ve datos.</p>
+  </section>
+</main>
+
+<dialog id="planDialog" aria-labelledby="dlgTitle">
+  <form id="planForm" novalidate>
+    <h2 id="dlgTitle">Cambiar plan</h2>
+    <p class="sub email" id="dlgEmail"></p>
+    <label for="fPlan">Plan</label>
+    <select class="field" id="fPlan"><option value="free">Gratis</option><option value="rutinas">Rutinas</option><option value="asesoria">Asesoría</option><option value="integral">Integral</option></select>
+    <label for="fStatus">Estado</label>
+    <select class="field" id="fStatus"><option value="active">Activo</option><option value="past_due">Pago atrasado</option><option value="canceled">Cancelado</option></select>
+    <label for="fUntil">Vence (opcional)</label>
+    <input class="field" id="fUntil" type="date" aria-describedby="fUntilHint"><div class="hint" id="fUntilHint">Vacío = sin vencimiento. Vence al final de ese día.</div>
+    <label for="fNote">Nota interna (opcional)</label>
+    <input class="field" id="fNote" type="text" maxlength="200" placeholder="Ej.: tester, cortesía, cambio pedido por mail">
+    <div class="err" id="dlgErr" role="alert"></div>
+    <div class="row"><button class="btn secondary" id="dlgCancel" type="button">Cancelar</button><button class="btn" id="dlgSave" type="submit">Guardar cambio</button></div>
+  </form>
+</dialog>
+<style>.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}</style>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js" integrity="sha384-/E7xfJz9bbCsrwJAbrt9CO5JB1REPVQjuSrQT4Cpz2BQBocDVsGLB2/VMAEzYaf+" crossorigin="anonymous"></script>
+<script src="forma-admin.js"></script>
+<script>
+(function(){
+  var cfg = window.FORMA_CONFIG || {}, client = null;
+  try { if (cfg.supabaseUrl && cfg.supabasePublishableKey && window.supabase && window.supabase.createClient) client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabasePublishableKey); } catch (e) {}
+  window.formaAdminUI = window.FormaAdmin.start({ client: client });
+  window.formaAdminUI.boot();
+})();
+</script>
+</body>
+</html>
